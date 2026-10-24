@@ -1,0 +1,32 @@
+-- Action reutilizável para QUALQUER campus / espaço.
+-- Entrada: upflow/v1/{campus}/{espaco}/raw/reading
+-- JSON: {"occupied":25,"capacity":90,"observed_at":"...Z","source":"demo_simulator"}
+-- Saídas: processed/occupied, processed/capacity, processed/percentage,
+--         processed/status, processed/observed_at
+-- Status: quiet (< 50%), moderate (50 a 79.99%), busy (>= 80%), invalid.
+
+DEFINE ACTION UPFlowProcessReading
+ON TOPIC "upflow/v1/+/+/raw/reading" DO
+    SET "campus" WITH TOPIC POSITION 3
+    SET "venue" WITH TOPIC POSITION 4
+    SET "occupied" WITH (GET JSON "occupied" IN PAYLOAD AS INT)
+    SET "capacity" WITH (GET JSON "capacity" IN PAYLOAD AS INT)
+    SET "observed" WITH (GET JSON "observed_at" IN PAYLOAD AS STRING)
+    SET "percent" WITH 0.0
+    SET "status" WITH "invalid"
+
+    IF {capacity} > 0 THEN
+        IF {occupied} >= 0 THEN
+            IF {occupied} <= {capacity} THEN
+                SET "percent" WITH ({occupied} * 100.0 / {capacity})
+                SET "status" WITH "quiet"
+                IF {percent} >= 80.0 THEN
+                    SET "status" WITH "busy"
+                ELSE IF {percent} >= 50.0 THEN
+                    SET "status" WITH "moderate"
+
+    PUBLISH TOPIC "upflow/v1/" + {campus} + "/" + {venue} + "/processed/status" WITH {status}
+    PUBLISH TOPIC "upflow/v1/" + {campus} + "/" + {venue} + "/processed/occupied" WITH {occupied}
+    PUBLISH TOPIC "upflow/v1/" + {campus} + "/" + {venue} + "/processed/capacity" WITH {capacity}
+    PUBLISH TOPIC "upflow/v1/" + {campus} + "/" + {venue} + "/processed/percentage" WITH {percent}
+    PUBLISH TOPIC "upflow/v1/" + {campus} + "/" + {venue} + "/processed/observed_at" WITH {observed}

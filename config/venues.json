@@ -1,0 +1,23 @@
+[
+  {
+    "campus": "feup",
+    "id": "bar_minas",
+    "name": "Bar de Minas",
+    "capacity": 90,
+    "initial_occupied": 25
+  },
+  {
+    "campus": "feup",
+    "id": "cantina_engenharia",
+    "name": "Cantina de Engenharia",
+    "capacity": 324,
+    "initial_occupied": 252
+  },
+  {
+    "campus": "feup",
+    "id": "grill_engenharia",
+    "name": "Grill de Engenharia",
+    "capacity": 120,
+    "initial_occupied": 72
+  }
+]
