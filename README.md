@@ -214,7 +214,7 @@ O teste de integração com a dashboard deve ser repetido após alterações à 
 - Os toggles de favoritos da demonstração usam tópicos MQTT partilhados; não guardam preferências individuais.
 - A funcionalidade de cantinas favoritas não funciona atualmente, mas, de acordo com profissionais da Coreflux, pode ser mesmo um bug da plataforma!
 
-### Visão futura (não implementada neste MVP)
+### Visão futura
 
 - Contagem com sensores físicos, com testes de precisão e privacidade.
 - Fotografias, ementas e horários atualizados em cada página de detalhe.
