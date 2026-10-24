@@ -212,6 +212,7 @@ O teste de integração com a dashboard deve ser repetido após alterações à 
 - Os gráficos de linhas mostram dados em tempo real; não existe armazenamento histórico persistente da semana anterior.
 - A ausência de novas leituras deve ser tratada como dados possivelmente desatualizados, não como ocupação zero.
 - Os toggles de favoritos da demonstração usam tópicos MQTT partilhados; não guardam preferências individuais.
+- A funcionalidade de cantinas favoritas não funciona atualmente, mas, de acordo com profissionais da Coreflux, pode ser mesmo um bug da plataforma!
 
 ### Visão futura (não implementada neste MVP)
 
