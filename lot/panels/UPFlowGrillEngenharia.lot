@@ -1,0 +1,31 @@
+DEFINE PANEL UPFlowGrillEngenharia
+    WITH TITLE "UPFlow - Grill de Engenharia"
+    WITH VISIBILITY PUBLIC
+    WITH STATE PUBLISHED
+    WITH LAYOUT "grid" COLUMNS 2 ROWS 3
+    WITH THEME "dark"
+    ADD COMPONENT "ocupação" WITH TYPE "gauge" AT COLUMN 1 ROW 2
+        SET LABEL "Ocupação atual"
+        SET UNIT "%"
+        SET THRESHOLD_MODE "gradient"
+        ADD THRESHOLD AT 25 WITH COLOR "#33d17a"
+        ADD THRESHOLD AT 50 WITH COLOR "#ff7800"
+        ADD THRESHOLD AT 100 WITH COLOR "#e01b24"
+        BIND VALUE TO TOPIC "upflow/v1/feup/grill_engenharia/processed/percentage"
+    ADD COMPONENT "historico" WITH TYPE "realtime-chart" AT COLUMN 2 ROW 2
+        SET LABEL "Evolução da ocupação"
+        SET UNIT "%"
+        SET TIME_WINDOW "100000"
+        BIND VALUE TO TOPIC "upflow/v1/feup/grill_engenharia/processed/percentage"
+    ADD COMPONENT "voltar" WITH TYPE "button" AT COLUMN 2 ROW 1
+        SET LABEL "Voltar"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowFEUP"
+    ADD COMPONENT "toggle3" WITH TYPE "toggle"
+        SET LABEL "Favorito"
+        BIND STATE TO TOPIC "upflow/v1/demo/favorites/grill_engenharia/visible"
+        ON CHANGE DO PUBLISH TOPIC "upflow/v1/demo/favorites/grill_engenharia/visible" WITH FALSE
+    ADD COMPONENT "map1" WITH TYPE "map" AT COLUMN 1 ROW 3 SPAN 2 COLUMNS
+        SET LABEL "Map"
+        SET ZOOM 200
+        SET CENTER_LAT 41.17640745567634
+        SET CENTER_LON -8.595276105979647

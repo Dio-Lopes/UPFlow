@@ -1,0 +1,18 @@
+DEFINE PANEL UPFlowFEUP
+    WITH TITLE "UPFlow - FEUP"
+    WITH VISIBILITY PUBLIC
+    WITH STATE PUBLISHED
+    WITH LAYOUT "grid" COLUMNS 3 ROWS 2
+    WITH THEME "dark"
+    ADD COMPONENT "barMinas" WITH TYPE "button" AT COLUMN 1 ROW 1
+        SET LABEL "Bar de Minas"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowBarMinas"
+    ADD COMPONENT "cantina" WITH TYPE "button" AT COLUMN 2 ROW 1
+        SET LABEL "Cantina de Engenharia"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowCantinaEngenharia"
+    ADD COMPONENT "grill" WITH TYPE "button" AT COLUMN 3 ROW 1
+        SET LABEL "Grill de Engenharia"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowGrillEngenharia"
+    ADD COMPONENT "voltar" WITH TYPE "button" AT COLUMN 1 ROW 2
+        SET LABEL "Voltar"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowHome"

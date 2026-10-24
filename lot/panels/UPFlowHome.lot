@@ -1,0 +1,32 @@
+DEFINE PANEL UPFlowHome
+    WITH TITLE "UPFlow"
+    WITH VISIBILITY PUBLIC
+    WITH STATE PUBLISHED
+    WITH LAYOUT "grid" COLUMNS 3 ROWS 3
+    WITH THEME "dark"
+    ADD COMPONENT "tituloFavoritos" WITH TYPE "header" AT COLUMN 1 ROW 1
+        SET CONTENT "Os meus favoritos"
+        SET VISIBLE TRUE
+    ADD COMPONENT "gauge1" WITH TYPE "gauge" AT COLUMN 1 ROW 2
+        SET LABEL "Cantina de Engenharia"
+        SET UNIT "%"
+        SET THRESHOLD_MODE "gradient"
+        SET VISIBLE TRUE
+        ADD THRESHOLD AT 25 WITH COLOR "#33d17a"
+        ADD THRESHOLD AT 50 WITH COLOR "#ff7800"
+        ADD THRESHOLD AT 100 WITH COLOR "#e01b24"
+        BIND VALUE TO TOPIC "upflow/v1/feup/cantina_engenharia/processed/percentage"
+    ADD COMPONENT "gauge2" WITH TYPE "gauge" AT COLUMN 2 ROW 2
+        SET Z_INDEX 0
+        SET LABEL "Bar de Minas"
+        SET UNIT "%"
+        SET THRESHOLD_MODE "gradient"
+        SET VISIBLE FALSE
+        SET OPACITY 0
+        ADD THRESHOLD AT 25 WITH COLOR "#33d17a"
+        ADD THRESHOLD AT 50 WITH COLOR "#ff7800"
+        ADD THRESHOLD AT 100 WITH COLOR "#e01b24"
+        BIND VALUE TO TOPIC "upflow/v1/feup/bar_minas/processed/percentage"
+    ADD COMPONENT "feupButton" WITH TYPE "button" AT COLUMN 1 ROW 3
+        SET LABEL "Explorar FEUP"
+        ON CLICK DO NAVIGATE TO PANEL "UPFlowFEUP"

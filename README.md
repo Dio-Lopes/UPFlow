@@ -29,7 +29,11 @@ Dashboard Coreflux
         └── indicadores de ocupação e visualização dos espaços
 ```
 
-**Validado no broker durante o desenvolvimento:** receção de leituras MQTT, execução com sucesso da Action `UPFlowProcessReading` e publicação dos respetivos tópicos `processed/*`. Por exemplo, `93` lugares ocupados em `120` resulta em `77,5%` e estado `moderate`.
+Ou seja:
+1. Receção de leituras MQTT 
+2. Execução da Action `UPFlowProcessReading` 
+3. Publicação dos respetivos tópicos `processed/*
+Por exemplo, `93` lugares ocupados em `120` resulta em `77,5%` e estado `moderate`.
 
 **Dashboard:** o ficheiro `panels/01-upflow-dashboard.lot` fornece a definição inicial. A versão final, incluindo eventuais páginas e gráficos adicionais criados no Hub, tem de ser sincronizada com o repositório antes da entrega.
 
@@ -48,7 +52,7 @@ Dashboard Coreflux
 | Cantina de Engenharia (SASUP) | 324 | Informação publicada pelos SASUP |
 | Grill de Engenharia | 120 | Informação publicada pelos SASUP |
 
-A configuração está em [`config/venues.json`](config/venues.json); os dados de referência e fontes estão em [`config/venue_facts.json`](config/venue_facts.json). Os números de pessoas presentes são sempre simulados.
+A configuração está em [`config/venues.json`](config/venues.json);. Os números de pessoas presentes são sempre simulados.
 
 ## Estrutura do repositório
 
