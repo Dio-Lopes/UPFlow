@@ -4,7 +4,7 @@
 
 O **UPFlow** é uma prova de conceito que monitoriza e apresenta a **ocupação estimada de espaços de alimentação universitários**, ajudando estudantes a comparar alternativas antes de se deslocarem. Foi desenvolvido na Hackathon SciTeCh'26, com **Coreflux** como plataforma central de comunicação e processamento de dados.
 
-> **Prova de conceito:** todas as leituras de ocupação são **simuladas**. O sistema não mede neste momento a ocupação real das cantinas nem o tempo de espera nas filas.
+> **Prova de conceito:** todas as leituras de ocupação são **simuladas**. O sistema não mede neste momento a ocupação real das cantinas.
 
 ## O problema
 
@@ -29,13 +29,17 @@ Dashboard Coreflux
         └── indicadores de ocupação e visualização dos espaços
 ```
 
-Ou seja:
-1. Receção de leituras MQTT 
-2. Execução da Action `UPFlowProcessReading` 
-3. Publicação dos respetivos tópicos `processed/*
+**Fluxo implementado:**
+1. O simulador Python publica leituras MQTT das três cantinas.
+2. A Action `UPFlowProcessReading` recebe as leituras, valida-as e calcula a percentagem e o estado.
+3. A Coreflux publica os resultados nos tópicos `processed/*`.
+4. Os painéis da Coreflux subscrevem os resultados para apresentar os indicadores e gráficos.
+
 Por exemplo, `93` lugares ocupados em `120` resulta em `77,5%` e estado `moderate`.
 
-**Dashboard:** o ficheiro `panels/01-upflow-dashboard.lot` fornece a definição inicial. A versão final, incluindo eventuais páginas e gráficos adicionais criados no Hub, tem de ser sincronizada com o repositório antes da entrega.
+**Dashboard implementada:** cinco painéis (`UPFlowHome`, `UPFlowFEUP`, `UPFlowBarMinas`, `UPFlowCantinaEngenharia` e `UPFlowGrillEngenharia`), com navegação entre páginas, gauges e gráficos de linhas em tempo real nas páginas de detalhe. O código-fonte está em [`lot/panels/`](lot/panels/) e a exportação em [`notebooks/UPFlow.lotnb`](notebooks/UPFlow.lotnb).
+
+**Favoritos:** existem componentes demonstrativos ligados a tópicos MQTT partilhados; ainda não são preferências personalizadas por utilizador. Os gráficos apresentam leituras em tempo real, não um histórico persistente da semana anterior.
 
 ## Tecnologias
 
@@ -52,7 +56,7 @@ Por exemplo, `93` lugares ocupados em `120` resulta em `77,5%` e estado `moderat
 | Cantina de Engenharia (SASUP) | 324 | Informação publicada pelos SASUP |
 | Grill de Engenharia | 120 | Informação publicada pelos SASUP |
 
-A configuração está em [`config/venues.json`](config/venues.json);. Os números de pessoas presentes são sempre simulados.
+A configuração está em [`config/venues.json`](config/venues.json). Os números de pessoas presentes são sempre simulados.
 
 ## Estrutura do repositório
 
@@ -63,21 +67,27 @@ UPFlow/
 ├── .gitignore
 ├── requirements.txt
 ├── config/
-│   ├── venues.json           # Espaços e parâmetros do simulador
+│   └── venues.json
 ├── upflow/
-│   ├── settings.py           # Configuração e convenção de tópicos
-│   ├── mqtt_client.py        # Comunicação MQTT
-│   ├── publisher.py          # Publicação manual de leituras
-│   └── simulator.py          # Sensores virtuais
+│   ├── __init__.py
+│   ├── settings.py
+│   ├── mqtt_client.py
+│   ├── publisher.py
+│   └── simulator.py
 ├── lot/
-│   └── 01-upflow-process-reading.lot
-├── panels/
-│   └── 01-upflow-dashboard.lot
+│   ├── actions/
+│   │   └── UPFlowProcessReading.lot
+│   └── panels/
+│       ├── UPFlowHome.lot
+│       ├── UPFlowFEUP.lot
+│       ├── UPFlowBarMinas.lot
+│       ├── UPFlowCantinaEngenharia.lot
+│       └── UPFlowGrillEngenharia.lot
+├── notebooks/
+│   └── UPFlow.lotnb
 └── tests/
     └── test_core.py
 ```
-
-Esta árvore descreve o **código-base**. Se forem criadas páginas adicionais da dashboard ou notebooks exportados da Coreflux, os respetivos ficheiros devem ser adicionados e esta secção atualizada.
 
 ## Executar o projeto
 
@@ -105,7 +115,7 @@ MQTT_PASSWORD=COLOCAR_LOCALMENTE
 
 1. Abre o [Coreflux Hub](https://hub.eu1.coreflux.cloud/) e liga-te ao teu broker.
 2. No **LoT Editor**, abre/cria um notebook e adiciona uma célula LoT.
-3. Copia a definição do ficheiro [`lot/01-upflow-process-reading.lot`](lot/01-upflow-process-reading.lot).
+3. Copia a definição do ficheiro [`lot/actions/UPFlowProcessReading.lot`](lot/actions/UPFlowProcessReading.lot).
 4. Faz **Deploy** da Action `UPFlowProcessReading` e confirma que aparece em **Broker Runtime → Actions**.
 5. No **Data Viewer** ou **Action Console**, verifica as mensagens e as execuções.
 
@@ -131,14 +141,13 @@ Publicação manual de um cenário controlado:
 .venv/bin/python -m upflow.publisher --venue cantina_engenharia --occupied 300
 ```
 
-### 4. Ligar o dashboard
+### 4. Abrir a dashboard Coreflux
 
-1. No Coreflux Hub, abre o **Dashboard Manager**.
-2. Cria um painel usando a definição de [`panels/01-upflow-dashboard.lot`](panels/01-upflow-dashboard.lot), ou importa a versão final exportada pela equipa.
-3. Confirma que os gauges utilizam os tópicos `processed/percentage`.
-4. Publica uma nova leitura e verifica se os indicadores se atualizam automaticamente.
-
-A definição disponibilizada neste repositório deve corresponder à **versão final testada**. Se houver páginas, navegação ou gráficos adicionais implementados pela equipa, todos os seus ficheiros devem ser incluídos.
+1. No [Coreflux Hub](https://hub.eu1.coreflux.cloud/), ligar ao broker da equipa.
+2. No **LoT Editor**, abrir ou importar [`notebooks/UPFlow.lotnb`](notebooks/UPFlow.lotnb), que contém a Action e os cinco painéis. Alternativamente, consultar as definições individuais em [`lot/panels/`](lot/panels/).
+3. Confirmar que a Action e os cinco painéis estão presentes em **Broker Runtime**, sem redeploy desnecessário num broker já configurado.
+4. Abrir a dashboard `UPFlowHome`, navegar para `UPFlowFEUP` e depois para as páginas das cantinas.
+5. Publicar uma nova leitura e confirmar a atualização dos gauges e gráficos em tempo real.
 
 ## Contrato MQTT
 
@@ -199,24 +208,23 @@ O teste de integração com a dashboard deve ser repetido após alterações à 
 ### Limitações da prova de conceito
 
 - As ocupações são **simuladas**; não há sensores reais instalados nas cantinas.
-- A **ocupação** de lugares não equivale ao **comprimento da fila** nem ao **tempo de espera**.
-- A capacidade do Bar de Minas ainda não foi verificada.
-- O gráfico em tempo real não substitui armazenamento histórico persistente.
+- A **ocupação** não equivale ao **comprimento da fila** nem ao **tempo de espera**.
+- Os gráficos de linhas mostram dados em tempo real; não existe armazenamento histórico persistente da semana anterior.
 - A ausência de novas leituras deve ser tratada como dados possivelmente desatualizados, não como ocupação zero.
+- Os toggles de favoritos da demonstração usam tópicos MQTT partilhados; não guardam preferências individuais.
 
 ### Visão futura (não implementada neste MVP)
 
 - Contagem com sensores físicos, com testes de precisão e privacidade.
-- Páginas de detalhe com fotografias, ementas e horários atualizados.
-- Preferências pessoais, seleção de até três favoritos e recomendações por faculdade, orçamento e alimentação.
+- Fotografias, ementas e horários atualizados em cada página de detalhe.
+- Favoritos personalizados e persistentes por utilizador (até três), recomendações por faculdade, orçamento e alimentação.
 - Histórico persistente, tendências por dia/semana e estimativa de filas baseada em medições adequadas.
 - Integração, mediante acordo, com a app UNI e fontes de informação dos SASUP.
-- Expansão para FCUP, outras faculdades da Universidade do Porto e outras instituições.
+- Expansão outras faculdades da Universidade do Porto e, possívelmente, outras instituições.
 
 ## Documentação e fontes
 
 - [Documentação da Coreflux](https://docs.coreflux.org/latest)
-- [Tutorial oficial de dashboards](https://docs.coreflux.org/latest/quick-start/building-dashboards)
 - [SASUP — Cantinas](https://www.up.pt/portal/pt/sasup/alimentacao/cantinas/)
 
 ---
